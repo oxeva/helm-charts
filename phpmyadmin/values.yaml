@@ -64,7 +64,7 @@ image:
 ## Container port configuration
 ##
 containerPorts:
-  http: 80
+  http: 8080
 
 ## Database configuration
 ##

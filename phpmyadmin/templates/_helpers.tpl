@@ -148,9 +148,6 @@ Return the proper image name (for the init container volume-permissions image)
 {{/*
 Check if there are rolling tags in the images
 */}}
-{{- define "phpmyadmin.checkRollingTags" -}}
-{{- include "common.warnings.rollingTag" .Values.image -}}
-{{- end -}}
 
 {{/*
 Compile all warnings into a single message, and call fail.

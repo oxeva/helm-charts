@@ -95,6 +95,8 @@ spec:
               value: {{ include "phpmyadmin.databaseHost" . | quote }}
             - name: PMA_PORT
               value: {{ include "phpmyadmin.databasePort" . | quote }}
+            - name: APACHE_PORT
+              value: {{ .Values.containerPorts.http | quote }}
             {{- if .Values.db.allowArbitraryServer }}
             - name: PMA_ARBITRARY
               value: "1"

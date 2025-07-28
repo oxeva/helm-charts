@@ -43,4 +43,3 @@
 {{- end }}
 
 {{- include "phpmyadmin.validateValues" . }}
-{{- include "phpmyadmin.checkRollingTags" . }}

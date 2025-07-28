@@ -57,6 +57,7 @@ The following table lists the configurable parameters of the phpMyAdmin chart an
 | `image.pullPolicy` | phpMyAdmin image pull policy | `IfNotPresent` |
 | `image.pullSecrets` | phpMyAdmin image pull secrets | `[]` |
 | `replicaCount` | Number of phpMyAdmin replicas | `1` |
+| `containerPorts.http` | Container HTTP port | `8080` |
 
 ### Database parameters
 
@@ -215,7 +216,11 @@ data:
 
 1. **Root User**: The official phpMyAdmin Docker image runs as root user. This chart is configured to accommodate this by setting `runAsUser: 0` and `runAsNonRoot: false` in the security context. Required capabilities (CHOWN, DAC_OVERRIDE, FOWNER, SETGID, SETUID) are added for proper functionality.
 
-2. **Service Account**: The chart sets `automountServiceAccountToken: false` by default for security.
+2. **Read-Only Root Filesystem**: The container uses `readOnlyRootFilesystem: true` with an emptyDir volume mounted at `/tmp` for temporary files.
+
+3. **Non-Privileged Port**: phpMyAdmin runs on port 8080 instead of the default port 80, which doesn't require root privileges.
+
+4. **Service Account**: The chart sets `automountServiceAccountToken: false` by default for security.
 
 3. **Network Security**: Always use TLS/SSL in production environments
 
