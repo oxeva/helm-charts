@@ -128,7 +128,7 @@ containerSecurityContext:
   runAsUser: 0
   runAsNonRoot: false
   privileged: false
-  readOnlyRootFilesystem: true
+  readOnlyRootFilesystem: false
   allowPrivilegeEscalation: false
   capabilities:
     drop: ["ALL"]
@@ -186,7 +186,7 @@ readinessProbe:
 ##
 startupProbe:
   enabled: false
-  initialDelaySeconds: 30
+  initialDelaySeconds: 10
   periodSeconds: 10
   timeoutSeconds: 30
   successThreshold: 1

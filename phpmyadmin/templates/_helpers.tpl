@@ -215,3 +215,16 @@ Common annotations
 {{ toYaml . }}
 {{- end }}
 {{- end }}
+
+{{/*
+Generate the PMA_ABSOLUTE_URI from ingress configuration
+*/}}
+{{- define "phpmyadmin.absoluteUri" -}}
+{{- if and .Values.ingress.enabled .Values.ingress.hostname -}}
+{{- $scheme := "http" -}}
+{{- if .Values.ingress.tls -}}
+{{- $scheme = "https" -}}
+{{- end -}}
+{{- printf "%s://%s%s" $scheme .Values.ingress.hostname .Values.ingress.path -}}
+{{- end -}}
+{{- end -}}
