@@ -34,12 +34,11 @@ Create chart name and version as used by the chart label.
 Common labels
 */}}
 {{- define "phpmyadmin.labels" -}}
-
+app.kubernetes.io/managed-by: {{ .Release.Service }}
 {{ include "phpmyadmin.selectorLabels" . }}
 {{- if .Chart.AppVersion }}
 app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
 {{- end }}
-app.kubernetes.io/managed-by: {{ .Release.Service }}
 helm.sh/chart: {{ include "phpmyadmin.chart" . }}
 {{- with .Values.commonLabels }}
 {{ toYaml . }}

@@ -37,7 +37,7 @@ spec:
       http:
         paths:
           - path: {{ default "/" .path }}
-            pathType: {{ default "Prefix" .pathType }}
+            pathType: {{ default "ImplementationSpecific" .pathType }}
             backend:
               service:
                 name: {{ include "phpmyadmin.fullname" $ }}

@@ -93,7 +93,7 @@ The following table lists the configurable parameters of the phpMyAdmin chart an
 | `ingress.ingressClassName` | IngressClass that will be used | `haproxy-internal` |
 | `ingress.hostname` | Default host for the ingress resource | `website-pma.cannes.gw.oxv.fr` |
 | `ingress.path` | Default path for the ingress resource | `/` |
-| `ingress.pathType` | Ingress path type | `Prefix` |
+| `ingress.pathType` | Ingress path type | `ImplementationSpecific` |
 | `ingress.annotations` | Ingress annotations | See values.yaml |
 | `ingress.tls` | Enable TLS configuration | `true` |
 

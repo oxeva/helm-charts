@@ -128,7 +128,7 @@ containerSecurityContext:
   runAsUser: 0
   runAsNonRoot: false
   privileged: false
-  readOnlyRootFilesystem: false
+  readOnlyRootFilesystem: true
   allowPrivilegeEscalation: false
   capabilities:
     drop: ["ALL"]
@@ -148,8 +148,10 @@ podSecurityContext:
 ## ref: http://kubernetes.io/docs/user-guide/compute-resources/
 ##
 resources:
-  limits: {}
-  requests: {}
+  limits: 
+    memory: 512Mi
+  requests: 
+    memory: 512Mi
 
 ## Configure the liveness probe
 ## ref: https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/#configure-probes
@@ -158,7 +160,7 @@ livenessProbe:
   enabled: true
   initialDelaySeconds: 30
   periodSeconds: 10
-  timeoutSeconds: 5
+  timeoutSeconds: 30
   successThreshold: 1
   failureThreshold: 6
   httpGet:
@@ -170,11 +172,11 @@ livenessProbe:
 ##
 readinessProbe:
   enabled: true
-  initialDelaySeconds: 5
-  periodSeconds: 5
-  timeoutSeconds: 3
+  initialDelaySeconds: 30
+  periodSeconds: 10
+  timeoutSeconds: 30
   successThreshold: 1
-  failureThreshold: 3
+  failureThreshold: 6
   httpGet:
     path: /
     port: http
@@ -186,7 +188,7 @@ startupProbe:
   enabled: false
   initialDelaySeconds: 30
   periodSeconds: 10
-  timeoutSeconds: 5
+  timeoutSeconds: 30
   successThreshold: 1
   failureThreshold: 15
   httpGet:
@@ -216,7 +218,7 @@ affinity: {}
 podAntiAffinity:
   ## Enable pod anti-affinity
   ##
-  enabled: false
+  enabled: true
   
   ## Set the type of anti-affinity: hard or soft
   ## hard: requiredDuringSchedulingIgnoredDuringExecution
@@ -267,9 +269,6 @@ serviceAccount:
   ## Additional Service Account annotations
   ##
   annotations: {}
-  ## Automount API credentials for a service account.
-  ##
-  automountServiceAccountToken: true
 
 ## Pod disruption budget configuration
 ##
@@ -340,7 +339,7 @@ ingress:
   
   ## Ingress path type
   ##
-  pathType: Prefix
+  pathType: ImplementationSpecific
   
   ## Override API Version (automatically detected if not set)
   ##
@@ -534,55 +533,9 @@ networkPolicy:
   ##
   enabled: true
   
-  ## The Policy model to apply. When set to false, only pods with the correct
-  ## client label will have network access to the ports phpMyAdmin is listening
-  ## on. When true, phpMyAdmin will accept connections from any source
-  ## (with the correct destination port).
-  ##
-  allowExternal: true
-  
-  ## Allow the pod to access any range of port and all destinations.
-  ##
-  allowExternalEgress: true
-  
-  ## Allow connection from pods with specific labels in the same namespace
-  ## Example:
-  ## ingressNSMatchLabels:
-  ##   name: "ingress-nginx"
-  ##
-  ingressNSMatchLabels: {}
-  
-  ## Allow connection from pods with specific labels in a specific namespace
-  ## Example:
-  ## ingressNSPodMatchLabels:
-  ##   app: "ingress-nginx"
-  ##
-  ingressNSPodMatchLabels: {}
-  
-  ## Database pod selector for egress rules
-  ## Example:
-  ## databaseSelector:
-  ##   app: "mysql"
-  ##   component: "primary"
-  ##
-  databaseSelector: {}
-  
-  ## Extra egress rules to be applied to the NetworkPolicy
+  ## Custom ingress rules to be applied to the NetworkPolicy
   ## e.g:
-  ## extraEgress:
-  ##   - to:
-  ##       - podSelector:
-  ##           matchLabels:
-  ##             app: external-service
-  ##     ports:
-  ##       - port: 443
-  ##         protocol: TCP
-  ##
-  extraEgress: []
-  
-  ## Custom network policy rules
-  ## e.g:
-  ## customRules:
+  ## customIngressRules:
   ##   - from:
   ##       - podSelector:
   ##           matchLabels:
@@ -591,4 +544,17 @@ networkPolicy:
   ##       - port: 80
   ##         protocol: TCP
   ##
-  customRules: []
+  customIngressRules: []
+  
+  ## Custom egress rules to be applied to the NetworkPolicy
+  ## e.g:
+  ## customEgressRules:
+  ##   - to:
+  ##       - podSelector:
+  ##           matchLabels:
+  ##             app: "external-service"
+  ##     ports:
+  ##       - port: 443
+  ##         protocol: TCP
+  ##
+  customEgressRules: []
