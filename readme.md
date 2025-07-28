@@ -28,13 +28,13 @@ source .env
 3. Use project https://github.com/helm/chart-releaser
 4. Create package : 
 ```
-docker run --rm -it -e CR_TOKEN=$CR_TOKEN -v $(pwd):/project quay.io/helmpack/chart-releaser package -w /project -e HOME=/project /project/phpmyadmin
+cr package ./folder
 ```
 5. Upload package to github:
 ```
-docker run --rm -it -e CR_TOKEN=$CR_TOKEN -v $(pwd):/project quay.io/helmpack/chart-releaser upload -w /project -e HOME=/project /project/phpmyadmin
+cr upload ./folder
 ```
 6. Publish index on github:
 ```
-docker run --rm -it -e GIT_CONFIG_COUNT=1 -e GIT_CONFIG_KEY_0=safe.directory -e GIT_CONFIG_VALUE_0=/project -e CR_TOKEN=$CR_TOKEN -w /project -e HOME=/project -v $(pwd):/project quay.io/helmpack/chart-releaser index --config /project/.cr.yaml --index-path . --packages-with-index --push
+cr index --config /project/.cr.yaml --index-path . --packages-with-index --push
 ```
