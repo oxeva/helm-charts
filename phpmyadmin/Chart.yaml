@@ -1,0 +1,17 @@
+apiVersion: v2
+name: phpmyadmin
+description: A Helm chart for phpMyAdmin - A web interface for MySQL and MariaDB
+type: application
+version: 19.0.1
+appVersion: "5.2.2"
+keywords:
+  - phpmyadmin
+  - mysql
+  - mariadb
+  - database
+  - administration
+home: https://www.phpmyadmin.net/
+sources:
+  - https://github.com/phpmyadmin/phpmyadmin
+maintainers:
+  - name: oxeva

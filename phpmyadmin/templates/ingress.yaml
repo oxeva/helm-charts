@@ -1,0 +1,61 @@
+{{- if .Values.ingress.enabled }}
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ include "phpmyadmin.fullname" . }}
+  namespace: {{ .Release.Namespace | quote }}
+  labels:
+    {{- include "phpmyadmin.labels" . | nindent 4 }}
+  {{- if or .Values.ingress.annotations (include "phpmyadmin.annotations" .) }}
+  annotations:
+    {{- if (include "phpmyadmin.annotations" .) }}
+    {{- include "phpmyadmin.annotations" . | nindent 4 }}
+    {{- end }}
+    {{- if .Values.ingress.annotations }}
+    {{- include "phpmyadmin.tplValue" ( dict "value" .Values.ingress.annotations "context" $ ) | nindent 4 }}
+    {{- end }}
+  {{- end }}
+spec:
+  {{- if .Values.ingress.ingressClassName }}
+  ingressClassName: {{ .Values.ingress.ingressClassName | quote }}
+  {{- end }}
+  rules:
+    {{- if .Values.ingress.hostname }}
+    - host: {{ .Values.ingress.hostname | quote }}
+      http:
+        paths:
+          - path: {{ .Values.ingress.path }}
+            pathType: {{ .Values.ingress.pathType }}
+            backend:
+              service:
+                name: {{ include "phpmyadmin.fullname" . }}
+                port:
+                  name: http
+    {{- end }}
+    {{- range .Values.ingress.extraHosts }}
+    - host: {{ .name | quote }}
+      http:
+        paths:
+          - path: {{ default "/" .path }}
+            pathType: {{ default "Prefix" .pathType }}
+            backend:
+              service:
+                name: {{ include "phpmyadmin.fullname" $ }}
+                port:
+                  name: http
+    {{- end }}
+    {{- if .Values.ingress.extraRules }}
+    {{- include "phpmyadmin.tplValue" (dict "value" .Values.ingress.extraRules "context" $) | nindent 4 }}
+    {{- end }}
+  {{- if or (and .Values.ingress.tls (include "phpmyadmin.createTlsSecret" .)) .Values.ingress.extraTls }}
+  tls:
+    {{- if and .Values.ingress.tls (include "phpmyadmin.createTlsSecret" .) }}
+    - hosts:
+        - {{ .Values.ingress.hostname | quote }}
+      secretName: {{ include "phpmyadmin.tlsSecretName" . }}
+    {{- end }}
+    {{- if .Values.ingress.extraTls }}
+    {{- include "phpmyadmin.tplValue" (dict "value" .Values.ingress.extraTls "context" $) | nindent 4 }}
+    {{- end }}
+  {{- end }}
+{{- end }}

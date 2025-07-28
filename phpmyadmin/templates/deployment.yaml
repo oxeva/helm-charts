@@ -1,0 +1,196 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "phpmyadmin.fullname" . }}
+  namespace: {{ .Release.Namespace | quote }}
+  labels:
+    {{- include "phpmyadmin.labels" . | nindent 4 }}
+  {{- $annotations := include "phpmyadmin.annotations" . }}
+  {{- if $annotations }}
+  annotations:
+    {{- $annotations | nindent 4 }}
+  {{- end }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  {{- if .Values.updateStrategy }}
+  strategy: {{- toYaml .Values.updateStrategy | nindent 4 }}
+  {{- end }}
+  selector:
+    matchLabels:
+      {{- include "phpmyadmin.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "phpmyadmin.selectorLabels" . | nindent 8 }}
+        {{- with .Values.podLabels }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+      {{- if or .Values.podAnnotations (include "phpmyadmin.annotations" .) }}
+      annotations:
+        {{- if (include "phpmyadmin.annotations" .) }}
+        {{- include "phpmyadmin.annotations" . | nindent 8 }}
+        {{- end }}
+        {{- with .Values.podAnnotations }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+      {{- end }}
+    spec:
+      {{- include "phpmyadmin.imagePullSecrets" . | nindent 6 }}
+      serviceAccountName: {{ include "phpmyadmin.serviceAccountName" . }}
+      automountServiceAccountToken: false
+      {{- if .Values.podSecurityContext.enabled }}
+      securityContext: {{- omit .Values.podSecurityContext "enabled" | toYaml | nindent 8 }}
+      {{- end }}
+      {{- if .Values.priorityClassName }}
+      priorityClassName: {{ .Values.priorityClassName | quote }}
+      {{- end }}
+      {{- if .Values.schedulerName }}
+      schedulerName: {{ .Values.schedulerName | quote }}
+      {{- end }}
+      {{- if .Values.topologySpreadConstraints }}
+      topologySpreadConstraints: {{- include "phpmyadmin.tplValue" (dict "value" .Values.topologySpreadConstraints "context" .) | nindent 8 }}
+      {{- end }}
+      {{- if or .Values.affinity .Values.podAntiAffinity.enabled }}
+      affinity:
+        {{- if .Values.affinity }}
+        {{- include "phpmyadmin.tplValue" (dict "value" .Values.affinity "context" .) | nindent 8 }}
+        {{- end }}
+        {{- if .Values.podAntiAffinity.enabled }}
+        podAntiAffinity:
+          {{- if eq .Values.podAntiAffinity.type "hard" }}
+          requiredDuringSchedulingIgnoredDuringExecution:
+            - labelSelector:
+                matchLabels:
+                  {{- include "phpmyadmin.selectorLabels" . | nindent 18 }}
+              topologyKey: {{ .Values.podAntiAffinity.topologyKey }}
+          {{- else if eq .Values.podAntiAffinity.type "soft" }}
+          preferredDuringSchedulingIgnoredDuringExecution:
+            - weight: 1
+              podAffinityTerm:
+                labelSelector:
+                  matchLabels:
+                    {{- include "phpmyadmin.selectorLabels" . | nindent 20 }}
+                topologyKey: {{ .Values.podAntiAffinity.topologyKey }}
+          {{- end }}
+        {{- end }}
+      {{- end }}
+      {{- if .Values.nodeSelector }}
+      nodeSelector: {{- include "phpmyadmin.tplValue" (dict "value" .Values.nodeSelector "context" .) | nindent 8 }}
+      {{- end }}
+      {{- if .Values.tolerations }}
+      tolerations: {{- include "phpmyadmin.tplValue" (dict "value" .Values.tolerations "context" .) | nindent 8 }}
+      {{- end }}
+      {{- if .Values.initContainers }}
+      initContainers: {{- include "phpmyadmin.tplValue" (dict "value" .Values.initContainers "context" .) | nindent 8 }}
+      {{- end }}
+      containers:
+        - name: phpmyadmin
+          image: {{ include "phpmyadmin.image" . }}
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          {{- if .Values.containerSecurityContext.enabled }}
+          securityContext: {{- omit .Values.containerSecurityContext "enabled" | toYaml | nindent 12 }}
+          {{- end }}
+          env:
+            - name: PMA_HOST
+              value: {{ include "phpmyadmin.databaseHost" . | quote }}
+            - name: PMA_PORT
+              value: {{ include "phpmyadmin.databasePort" . | quote }}
+            {{- if .Values.db.allowArbitraryServer }}
+            - name: PMA_ARBITRARY
+              value: "1"
+            {{- end }}
+            {{- if .Values.db.user }}
+            - name: PMA_USER
+              value: {{ .Values.db.user | quote }}
+            {{- end }}
+            {{- if .Values.db.password }}
+            - name: PMA_PASSWORD
+              value: {{ .Values.db.password | quote }}
+            {{- end }}
+            {{- if .Values.db.existingSecret }}
+            - name: PMA_USER
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.db.existingSecret }}
+                  key: mysql-username
+            - name: PMA_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.db.existingSecret }}
+                  key: mysql-password
+            {{- end }}
+            {{- if .Values.auth.existingSecret }}
+            - name: PMA_CONTROLPASS
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.auth.existingSecret }}
+                  key: phpmyadmin-password
+            {{- else if .Values.auth.password }}
+            - name: PMA_CONTROLPASS
+              value: {{ .Values.auth.password | quote }}
+            {{- end }}
+            {{- if .Values.extraEnvVars }}
+            {{- include "phpmyadmin.tplValue" (dict "value" .Values.extraEnvVars "context" .) | nindent 12 }}
+            {{- end }}
+          {{- if or .Values.extraEnvVarsCM .Values.extraEnvVarsSecret }}
+          envFrom:
+            {{- if .Values.extraEnvVarsCM }}
+            - configMapRef:
+                name: {{ include "phpmyadmin.tplValue" (dict "value" .Values.extraEnvVarsCM "context" .) }}
+            {{- end }}
+            {{- if .Values.extraEnvVarsSecret }}
+            - secretRef:
+                name: {{ include "phpmyadmin.tplValue" (dict "value" .Values.extraEnvVarsSecret "context" .) }}
+            {{- end }}
+          {{- end }}
+          ports:
+            - name: http
+              containerPort: {{ .Values.containerPorts.http }}
+              protocol: TCP
+          {{- if not .Values.customLivenessProbe }}
+          {{- if .Values.livenessProbe.enabled }}
+          livenessProbe: {{- include "phpmyadmin.tplValue" (dict "value" (omit .Values.livenessProbe "enabled") "context" .) | nindent 12 }}
+          {{- end }}
+          {{- else }}
+          livenessProbe: {{- include "phpmyadmin.tplValue" (dict "value" .Values.customLivenessProbe "context" .) | nindent 12 }}
+          {{- end }}
+          {{- if not .Values.customReadinessProbe }}
+          {{- if .Values.readinessProbe.enabled }}
+          readinessProbe: {{- include "phpmyadmin.tplValue" (dict "value" (omit .Values.readinessProbe "enabled") "context" .) | nindent 12 }}
+          {{- end }}
+          {{- else }}
+          readinessProbe: {{- include "phpmyadmin.tplValue" (dict "value" .Values.customReadinessProbe "context" .) | nindent 12 }}
+          {{- end }}
+          {{- if not .Values.customStartupProbe }}
+          {{- if .Values.startupProbe.enabled }}
+          startupProbe: {{- include "phpmyadmin.tplValue" (dict "value" (omit .Values.startupProbe "enabled") "context" .) | nindent 12 }}
+          {{- end }}
+          {{- else }}
+          startupProbe: {{- include "phpmyadmin.tplValue" (dict "value" .Values.customStartupProbe "context" .) | nindent 12 }}
+          {{- end }}
+          {{- if .Values.resources }}
+          resources: {{- toYaml .Values.resources | nindent 12 }}
+          {{- end }}
+          volumeMounts:
+            {{- if .Values.persistence.enabled }}
+            - name: data
+              mountPath: {{ .Values.persistence.mountPath }}
+              {{- if .Values.persistence.subPath }}
+              subPath: {{ .Values.persistence.subPath }}
+              {{- end }}
+            {{- end }}
+            {{- if .Values.extraVolumeMounts }}
+            {{- include "phpmyadmin.tplValue" (dict "value" .Values.extraVolumeMounts "context" .) | nindent 12 }}
+            {{- end }}
+        {{- if .Values.sidecars }}
+        {{- include "phpmyadmin.tplValue" ( dict "value" .Values.sidecars "context" .) | nindent 8 }}
+        {{- end }}
+      volumes:
+        {{- if .Values.persistence.enabled }}
+        - name: data
+          persistentVolumeClaim:
+            claimName: {{ default (include "phpmyadmin.fullname" .) .Values.persistence.existingClaim }}
+        {{- end }}
+        {{- if .Values.extraVolumes }}
+        {{- include "phpmyadmin.tplValue" (dict "value" .Values.extraVolumes "context" .) | nindent 8 }}
+        {{- end }}
