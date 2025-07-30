@@ -28,13 +28,15 @@ source .env
 3. Use project https://github.com/helm/chart-releaser
 4. Create package : 
 ```
-cr package ./folder
+cr package --config .cr.yaml ./folder
 ```
 5. Upload package to github:
 ```
-cr upload ./folder
+cr upload --config .cr.yaml --token=$CR_TOKEN ./folder
 ```
 6. Publish index on github:
 ```
 cr index --config /project/.cr.yaml --index-path . --packages-with-index --push
 ```
+NOTE: buggy because of https://github.com/helm/chart-releaser/issues/124 ; 
+need to manually upload targz + edit index.yaml in branch gh-pages.
