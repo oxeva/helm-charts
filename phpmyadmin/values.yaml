@@ -469,18 +469,19 @@ sidecars: []
 
 ## Extra volumes to add to the phpMyAdmin statefulset
 ##
-extraVolumes:
-- name: config-inc-php
-  configMap:
-    name: config-inc-php
-
+# extraVolumes:
+# - name: config-inc-php
+#   configMap:
+#     name: config-inc-php
+extraVolumes: []
 ## Extra volume mounts to add to the phpMyAdmin container
 ##
-extraVolumeMounts:
-- name: config-inc-php
-  mountPath: /opt/bitnami/phpmyadmin/config.inc.php
-  subPath: config.inc.php
+# extraVolumeMounts: 
+# - name: config-inc-php
+#   mountPath: /etc/phpmyadmin/conf.d/custom.php
+#   subPath: config.inc.php
 
+extraVolumeMounts: []
 ## ConfigMap with scripts to be run at first boot
 ## NOTE: This will override other scripts
 ##
