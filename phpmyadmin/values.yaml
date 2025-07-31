@@ -75,7 +75,7 @@ db:
   
   ## Database host
   ##
-  host: website-db-mysql-master
+  host: ""
   
   ## Database port
   ##
@@ -327,11 +327,11 @@ ingress:
   ## This is supported in Kubernetes 1.18+ and required if you have more than one IngressClass marked as the default for your cluster .
   ## ref: https://kubernetes.io/docs/concepts/services-networking/ingress/#deprecated-annotation
   ##
-  ingressClassName: haproxy-internal
+  ingressClassName: ""
   
   ## When the ingress is enabled, a host pointing to this will be created
   ##
-  hostname: website-pma.cannes.gw.oxv.fr
+  hostname: ""
   
   ## The Path to phpMyAdmin. You may need to set this to '/*' in order to use this with ALB ingress controllers.
   ##
@@ -351,9 +351,7 @@ ingress:
   ## Use this parameter to set the required annotations for cert-manager, see
   ## ref: https://cert-manager.io/docs/usage/ingress/#supported-annotations
   ##
-  annotations:
-    cert-manager.io/cluster-issuer: letsencrypt-internal
-    haproxy.org/allow-list: 82.66.250.240,51.210.177.245
+  annotations: {}
   
   ## Enable TLS configuration for the hostname defined at ingress.hostname parameter
   ## TLS certificates will be retrieved from a TLS secret with name: {{- printf "%s-tls" .Values.ingress.hostname }}
@@ -409,11 +407,11 @@ persistence:
   ## The path the volume will be mounted at, useful when using different
   ## Redis images.
   ##
-  mountPath: /data
+  # mountPath: /data
   ## The subdirectory of the volume to mount to, useful in dev environments
   ## and one PV for multiple services.
   ##
-  subPath: ""
+  # subPath: ""
   ## phpMyAdmin data Persistent Volume Storage Class
   ## If defined, storageClassName: <storageClass>
   ## If set to "-", storageClassName: "", which disables dynamic provisioning
