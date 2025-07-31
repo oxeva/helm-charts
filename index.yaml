@@ -3,9 +3,9 @@ entries:
   phpmyadmin:
   - apiVersion: v2
     appVersion: 5.2.2
-    created: "2025-07-30T17:25:55.065696606+02:00"
+    created: "2025-07-31T12:33:54.177970745+02:00"
     description: A Helm chart for phpMyAdmin - A web interface for MySQL and MariaDB
-    digest: da8dcce813d7fd83dde10a11e3c04ab0eba0bd8bdbad860a4aeeb14f1e7c3fa9
+    digest: 16bc818ce7488e2c44b74949bd3b2573ca0cdcc60c7e17f6a47981a03747ed89
     home: https://www.phpmyadmin.net/
     keywords:
     - phpmyadmin
@@ -20,69 +20,6 @@ entries:
     - https://github.com/phpmyadmin/phpmyadmin
     type: application
     urls:
-    - phpmyadmin-25.07.1.tgz
-    version: 25.07.1
-  - apiVersion: v2
-    appVersion: 5.2.2
-    created: "2025-07-28T13:18:45.819800459Z"
-    description: A Helm chart for phpMyAdmin - A web interface for MySQL and MariaDB
-    digest: d5b11f17d25bdf671307c150d5f2e50f34f5bcc6e90271c8fdacfee1ce3089da
-    home: https://www.phpmyadmin.net/
-    keywords:
-    - phpmyadmin
-    - mysql
-    - mariadb
-    - database
-    - administration
-    maintainers:
-    - name: oxeva
-    name: phpmyadmin
-    sources:
-    - https://github.com/phpmyadmin/phpmyadmin
-    type: application
-    urls:
-    - phpmyadmin-25.07.0.tgz
-    version: 25.07.0
-- apiVersion: v2
-    appVersion: 5.2.2
-    created: "2025-07-30T17:25:55.065696606+02:00"
-    description: A Helm chart for phpMyAdmin - A web interface for MySQL and MariaDB
-    digest: da8dcce813d7fd83dde10a11e3c04ab0eba0bd8bdbad860a4aeeb14f1e7c3fa9
-    home: https://www.phpmyadmin.net/
-    keywords:
-    - phpmyadmin
-    - mysql
-    - mariadb
-    - database
-    - administration
-    maintainers:
-    - name: oxeva
-    name: phpmyadmin
-    sources:
-    - https://github.com/phpmyadmin/phpmyadmin
-    type: application
-    urls:
-    - phpmyadmin-25.07.1.tgz
-    version: 25.07.1
-  - apiVersion: v2
-    appVersion: 5.2.2
-    created: "2025-07-28T13:18:45.819800459Z"
-    description: A Helm chart for phpMyAdmin - A web interface for MySQL and MariaDB
-    digest: d5b11f17d25bdf671307c150d5f2e50f34f5bcc6e90271c8fdacfee1ce3089da
-    home: https://www.phpmyadmin.net/
-    keywords:
-    - phpmyadmin
-    - mysql
-    - mariadb
-    - database
-    - administration
-    maintainers:
-    - name: oxeva
-    name: phpmyadmin
-    sources:
-    - https://github.com/phpmyadmin/phpmyadmin
-    type: application
-    urls:
-    - phpmyadmin-25.07.0.tgz
-    version: 25.07.0
+    - phpmyadmin-25.07.2.tgz
+    version: 25.07.2
 generated: "2025-07-31T12:33:54.178104597+02:00"
